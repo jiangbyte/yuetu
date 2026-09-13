@@ -44,6 +44,7 @@
     "@babel/runtime": "^7.24.4",
     "@capacitor/android": "^8.5.2",
     "@capacitor/core": "^8.5.2",
+    "@capacitor/status-bar": "8.0.3",
     "@op-engineering/op-sqlite": "^15.1.6",
     "@tarojs/components": "4.2.1",
     "@tarojs/helper": "4.2.1",
