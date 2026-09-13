@@ -118,7 +118,7 @@ Debug APK 路径：
 
 `android/app/build/outputs/apk/debug/app-debug.apk`
 
-推送 `v*` tag 时，GitHub Actions 会自动构建并发布 Release（附件为 debug APK）。说明见 `docs/release-notes/`。
+推送 `v*` tag 时，GitHub Actions 会自动构建 Android debug APK 并发布 Release。说明见 `docs/release-notes/`。
 
 ### Android（React Native，可选）
 

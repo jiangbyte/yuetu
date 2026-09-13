@@ -1,4 +1,4 @@
-# Release：推送 v* tag 时构建 H5 + Android debug APK，并发布 GitHub Release
+# Release：推送 v* tag 时构建 Android debug APK，并发布 GitHub Release
 #
 # Author: Charlie
 #
@@ -29,7 +29,7 @@ env:
 
 jobs:
   publish:
-    name: Build & Publish
+    name: Publish Android APK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -73,11 +73,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build H5 (Capacitor)
-        run: CAPACITOR=1 pnpm build:h5
-
-      - name: Sync Capacitor Android
-        run: npx cap sync android
+      - name: Sync web assets into Android
+        run: pnpm sync:android
 
       - name: Assemble debug APK
         working-directory: android
