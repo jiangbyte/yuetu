@@ -1,0 +1,35 @@
+.suggest-category {
+  &__input {
+    font-size: var(--font-input);
+    font-weight: 500;
+    width: 100%;
+    color: var(--color-text);
+    line-height: 1.4;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  &__chip {
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    font-size: var(--font-meta);
+
+    &.is-active {
+      background: rgba(26, 26, 26, 0.08);
+      color: var(--color-text);
+      font-weight: 600;
+    }
+  }
+}
+
+.suggest-category input,
+.suggest-category .taro-input {
+  font-size: var(--font-input) !important;
+}

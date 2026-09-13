@@ -1,0 +1,49 @@
+:root {
+  /* 雪白玉兔：纯白底 + 炭黑强调，零褐零蓝 */
+  --color-bg: #f7f7f7;
+  --color-sheet: #ffffff;
+  --color-card: #ffffff;
+  --color-surface: #efefef;
+  --color-header: #1a1a1a;
+  --color-header-deep: #1a1a1a;
+  --color-header-soft: #ffffff;
+  --color-primary: #1a1a1a;
+  --color-primary-dark: #1a1a1a;
+  --color-expense: #e07070;
+  --color-expense-soft: #e07070;
+  --color-income: #5aaa9a;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #8c8c8c;
+  --color-mute: #cfcfcf;
+  --color-line: rgba(26, 26, 26, 0.06);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-sheet: 28px;
+  --radius-btn: 999px;
+  --radius-card: 16px;
+  --shadow-sheet: 0 -2px 12px rgba(26, 26, 26, 0.04);
+  --shadow-soft: 0 2px 16px rgba(26, 26, 26, 0.05);
+  --color-border: var(--color-line);
+  --font-input: 28px;
+  --font-body: 28px;
+  --font-label: 22px;
+  --font-meta: 22px;
+  --font-title: 28px;
+}
+
+page {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'PingFang SC', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+}
+
+/* H5：避免系统默认把 input/textarea 字号拉乱 */
+input,
+textarea,
+.taro-input,
+.taro-textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}

@@ -1,0 +1,15 @@
+.category-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &__text {
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+  }
+}

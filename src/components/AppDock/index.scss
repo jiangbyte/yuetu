@@ -1,0 +1,268 @@
+.app-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  pointer-events: none;
+
+  /* 750 设计稿（真机约一半 CSS px） */
+  --dock-bar-h: calc(112px + env(safe-area-inset-bottom));
+  /* 入口贴近中心 +，从圆心向外扇出 */
+  --fan-radius: 300px;
+  --hub-drop: 72px;
+
+  &__mask {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.42);
+    pointer-events: auto;
+    z-index: 1;
+    animation: app-dock-fade 0.24s ease;
+  }
+
+  &__sheet {
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: var(--dock-bar-h);
+    /* 高度贴合扇面可视高度 */
+    height: 780px;
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(10%);
+    transform-origin: center bottom;
+    transition: opacity 0.28s ease, transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+
+    &.is-open {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+  }
+
+  /*
+   * 正圆扇面：圆心在 +。半径略大于半屏，弧度明显且能罩住标题。
+   */
+  &__fan-bg {
+    position: absolute;
+    left: 50%;
+    bottom: calc(-1 * var(--hub-drop));
+    width: 1100px;
+    height: 1100px;
+    border-radius: 50%;
+    background: #fff;
+    transform: translate(-50%, 50%);
+    box-shadow: 0 -16px 40px rgba(26, 26, 26, 0.1);
+  }
+
+  &__sheet-head {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 310px;
+    z-index: 1;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  &__sheet-title {
+    display: block;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: 0.12em;
+  }
+
+  &__sheet-sub {
+    display: block;
+    margin-top: 8px;
+    font-size: 22px;
+    color: rgba(26, 26, 26, 0.45);
+  }
+
+  &__hub {
+    position: absolute;
+    left: 50%;
+    bottom: calc(-1 * var(--hub-drop));
+    z-index: 1;
+    width: 0;
+    height: 0;
+  }
+
+  &__spoke {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 0;
+
+    &--left {
+      transform: rotate(-55deg);
+
+      .app-dock__action {
+        transform: rotate(55deg);
+      }
+    }
+
+    &--top {
+      transform: rotate(0deg);
+
+      .app-dock__action {
+        transform: rotate(0deg);
+      }
+    }
+
+    &--right {
+      transform: rotate(55deg);
+
+      .app-dock__action {
+        transform: rotate(-55deg);
+      }
+    }
+  }
+
+  &__action {
+    position: absolute;
+    left: 0;
+    bottom: calc(var(--fan-radius) - 100px);
+    width: 200px;
+    margin-left: -100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.28s ease;
+
+    .is-open & {
+      opacity: 1;
+    }
+  }
+
+  &__action-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    box-shadow: 0 6px 18px rgba(26, 26, 26, 0.08);
+    transform: scale(0.78);
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+
+    .is-open & {
+      transform: scale(1);
+    }
+  }
+
+  &__action--task &__action-icon {
+    background: #f0f7f5;
+  }
+
+  &__action-label {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  &__action-hint {
+    margin-top: 4px;
+    font-size: 20px;
+    color: rgba(26, 26, 26, 0.45);
+    line-height: 1.2;
+  }
+
+  &__bar {
+    pointer-events: auto;
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    min-height: 112px;
+    padding: 10px 4px calc(12px + env(safe-area-inset-bottom));
+    background: #fff;
+    border-top: 1px solid var(--color-line);
+    box-sizing: border-box;
+  }
+
+  &.is-open &__bar {
+    border-top-color: transparent;
+  }
+
+  &__item {
+    flex: 1;
+    height: 88px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    &.is-active .app-dock__item-label {
+      color: var(--color-primary-dark);
+      font-weight: 600;
+    }
+  }
+
+  &__item-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+      display: block;
+      flex-shrink: 0;
+    }
+  }
+
+  &__item-label {
+    font-size: 20px;
+    color: var(--color-text-secondary);
+    line-height: 1;
+    height: 20px;
+  }
+
+  &__center-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -36px;
+  }
+
+  &__center {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--color-header);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.28s ease, box-shadow 0.28s ease;
+    box-shadow: 0 6px 16px rgba(26, 26, 26, 0.14);
+
+    &.is-open {
+      background: var(--color-text);
+      box-shadow: 0 6px 16px rgba(26, 26, 26, 0.2);
+    }
+  }
+}
+
+@keyframes app-dock-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

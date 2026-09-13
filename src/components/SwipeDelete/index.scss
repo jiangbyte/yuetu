@@ -1,0 +1,36 @@
+.swipe-delete {
+  position: relative;
+  overflow: hidden;
+
+  &__actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 144px;
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+  }
+
+  &__delete {
+    width: 144px;
+    background: var(--color-expense);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__delete-text {
+    color: #fff;
+    font-size: 26px;
+    font-weight: 600;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    background: #fff;
+    will-change: transform;
+  }
+}

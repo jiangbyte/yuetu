@@ -1,0 +1,99 @@
+.note-edit {
+  padding: 20px 20px 48px;
+  background: var(--color-bg);
+  min-height: 100vh;
+  box-sizing: border-box;
+
+  &__field {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px 18px 16px;
+    margin-bottom: 12px;
+
+    &--content {
+      display: flex;
+      flex-direction: column;
+      min-height: 420px;
+      height: 52vh;
+      box-sizing: border-box;
+    }
+  }
+
+  &__label {
+    display: block;
+    font-size: var(--font-label);
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+
+  &__input {
+    width: 100%;
+    font-size: var(--font-input);
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--color-text);
+  }
+
+  &__content {
+    flex: 1;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    font-size: var(--font-body) !important;
+    line-height: 1.7 !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    color: var(--color-text);
+    resize: none !important;
+  }
+
+  &__save {
+    margin-top: 20px;
+  }
+
+  &__delete {
+    margin-top: 12px;
+  }
+}
+
+/* H5：压平 Taro Textarea 外层，铺满正文卡片 */
+.note-edit__field--content {
+  .taro-textarea,
+  .weui-textarea,
+  textarea,
+  /* Taro H5 常再包一层 */
+  > div:not(.note-edit__label) {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  textarea,
+  .taro-textarea,
+  .weui-textarea {
+    font-size: var(--font-body) !important;
+    line-height: 1.7 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    resize: none !important;
+    overflow-y: auto !important;
+  }
+}
+
+.note-edit__input,
+.note-edit .note-edit__input,
+.note-edit input,
+.note-edit .taro-input {
+  font-size: var(--font-input) !important;
+  line-height: 1.4 !important;
+}

@@ -1,0 +1,31 @@
+.amount-text {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+
+  &--sm {
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  &--md {
+    font-size: 32px;
+  }
+
+  &--lg {
+    font-size: 64px;
+    line-height: 1.1;
+  }
+
+  &--income {
+    color: var(--color-income);
+  }
+
+  &--expense {
+    color: var(--color-expense);
+  }
+
+  &--neutral {
+    color: var(--color-text);
+  }
+}

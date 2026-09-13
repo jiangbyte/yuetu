@@ -1,0 +1,41 @@
+.mine-page {
+  padding: 20px 20px calc(160px + env(safe-area-inset-bottom));
+  background: var(--color-bg);
+  min-height: 100vh;
+
+  &__card {
+    margin-bottom: 12px;
+    background: #fff;
+    border-radius: 16px;
+  }
+
+  &__nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__nav-title {
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  &__nav-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__nav-desc {
+    display: block;
+    margin-top: 10px;
+    font-size: 22px;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+  }
+
+  &__link {
+    color: var(--color-text-secondary);
+    font-size: 24px;
+  }
+}
