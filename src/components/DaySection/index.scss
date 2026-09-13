@@ -1,5 +1,5 @@
 .day-section {
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 
   &__head {
     display: flex;
@@ -21,8 +21,8 @@
   }
 
   &__body {
-    background: #fff;
-    border-radius: 16px;
+    background: var(--color-paper);
+    border-radius: var(--radius-md);
     padding: 2px 0;
     overflow: hidden;
   }

@@ -6,35 +6,36 @@
   z-index: 100;
   pointer-events: none;
 
-  /* 750 设计稿（真机约一半 CSS px） */
   --dock-bar-h: calc(112px + env(safe-area-inset-bottom));
-  /* 入口贴近中心 +，从圆心向外扇出 */
-  --fan-radius: 300px;
-  --hub-drop: 72px;
 
   &__mask {
     position: fixed;
     inset: 0;
-    background: rgba(26, 26, 26, 0.42);
+    background: rgba(31, 42, 44, 0.28);
     pointer-events: auto;
     z-index: 1;
-    animation: app-dock-fade 0.24s ease;
+    animation: app-dock-fade 0.2s ease;
   }
 
-  &__sheet {
+  &__panel {
     pointer-events: none;
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: var(--dock-bar-h);
-    /* 高度贴合扇面可视高度 */
-    height: 780px;
+    left: 24px;
+    right: 24px;
+    bottom: calc(var(--dock-bar-h) + 16px);
     z-index: 2;
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    padding: 16px;
+    background: var(--color-paper);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
     opacity: 0;
-    transform: translateY(10%);
+    transform: translateY(10px);
     transform-origin: center bottom;
-    transition: opacity 0.28s ease, transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-    overflow: hidden;
+    transition: opacity 0.2s ease, transform 0.22s ease;
+    box-sizing: border-box;
 
     &.is-open {
       opacity: 1;
@@ -43,139 +44,48 @@
     }
   }
 
-  /*
-   * 正圆扇面：圆心在 +。半径略大于半屏，弧度明显且能罩住标题。
-   */
-  &__fan-bg {
-    position: absolute;
-    left: 50%;
-    bottom: calc(-1 * var(--hub-drop));
-    width: 1100px;
-    height: 1100px;
-    border-radius: 50%;
-    background: #fff;
-    transform: translate(-50%, 50%);
-    box-shadow: 0 -16px 40px rgba(26, 26, 26, 0.1);
-  }
-
-  &__sheet-head {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 310px;
-    z-index: 1;
-    text-align: center;
-    pointer-events: none;
-  }
-
-  &__sheet-title {
-    display: block;
-    font-size: 34px;
-    font-weight: 700;
-    color: var(--color-text);
-    letter-spacing: 0.12em;
-  }
-
-  &__sheet-sub {
-    display: block;
-    margin-top: 8px;
-    font-size: 22px;
-    color: rgba(26, 26, 26, 0.45);
-  }
-
-  &__hub {
-    position: absolute;
-    left: 50%;
-    bottom: calc(-1 * var(--hub-drop));
-    z-index: 1;
-    width: 0;
-    height: 0;
-  }
-
-  &__spoke {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 0;
-    height: 0;
-
-    &--left {
-      transform: rotate(-55deg);
-
-      .app-dock__action {
-        transform: rotate(55deg);
-      }
-    }
-
-    &--top {
-      transform: rotate(0deg);
-
-      .app-dock__action {
-        transform: rotate(0deg);
-      }
-    }
-
-    &--right {
-      transform: rotate(55deg);
-
-      .app-dock__action {
-        transform: rotate(-55deg);
-      }
-    }
-  }
-
   &__action {
-    position: absolute;
-    left: 0;
-    bottom: calc(var(--fan-radius) - 100px);
-    width: 200px;
-    margin-left: -100px;
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    opacity: 0;
-    transition: opacity 0.28s ease;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 6px;
+    border-radius: var(--radius-md);
+    background: var(--color-accent-soft);
+  }
 
-    .is-open & {
-      opacity: 1;
-    }
+  &__action--ledger {
+    background: var(--color-accent-soft);
+  }
+
+  &__action--task {
+    background: var(--color-task-soft);
+  }
+
+  &__action--note {
+    background: var(--color-note-soft);
   }
 
   &__action-icon {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #f5f5f5;
+    width: 64px;
+    height: 64px;
+    border-radius: 40%;
+    background: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
-    box-shadow: 0 6px 18px rgba(26, 26, 26, 0.08);
-    transform: scale(0.78);
-    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-
-    .is-open & {
-      transform: scale(1);
-    }
-  }
-
-  &__action--task &__action-icon {
-    background: #f0f7f5;
   }
 
   &__action-label {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
     color: var(--color-text);
     line-height: 1.2;
     white-space: nowrap;
-  }
-
-  &__action-hint {
-    margin-top: 4px;
-    font-size: 20px;
-    color: rgba(26, 26, 26, 0.45);
-    line-height: 1.2;
   }
 
   &__bar {
@@ -187,13 +97,9 @@
     justify-content: space-around;
     min-height: 112px;
     padding: 10px 4px calc(12px + env(safe-area-inset-bottom));
-    background: #fff;
+    background: var(--color-paper);
     border-top: 1px solid var(--color-line);
     box-sizing: border-box;
-  }
-
-  &.is-open &__bar {
-    border-top-color: transparent;
   }
 
   &__item {
@@ -206,8 +112,8 @@
     gap: 6px;
 
     &.is-active .app-dock__item-label {
-      color: var(--color-primary-dark);
-      font-weight: 600;
+      color: var(--color-accent-deep);
+      font-weight: 500;
     }
   }
 
@@ -241,19 +147,19 @@
   }
 
   &__center {
-    width: 96px;
-    height: 96px;
+    width: 92px;
+    height: 92px;
     border-radius: 50%;
-    background: var(--color-header);
+    background: var(--color-accent);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.28s ease, box-shadow 0.28s ease;
-    box-shadow: 0 6px 16px rgba(26, 26, 26, 0.14);
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 14px rgba(58, 143, 131, 0.28);
 
     &.is-open {
       background: var(--color-text);
-      box-shadow: 0 6px 16px rgba(26, 26, 26, 0.2);
+      box-shadow: 0 4px 12px rgba(31, 42, 44, 0.18);
     }
   }
 }

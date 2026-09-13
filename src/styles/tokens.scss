@@ -1,30 +1,51 @@
 :root {
-  /* 雪白玉兔：纯白底 + 炭黑强调，零褐零蓝 */
-  --color-bg: #f7f7f7;
+  /* 月光纸感：月白底 + 玉色点缀，少渐变、弱阴影 */
+  --color-bg: #f3f6f7;
+  --color-paper: #fafcfc;
   --color-sheet: #ffffff;
   --color-card: #ffffff;
-  --color-surface: #efefef;
-  --color-header: #1a1a1a;
-  --color-header-deep: #1a1a1a;
-  --color-header-soft: #ffffff;
-  --color-primary: #1a1a1a;
-  --color-primary-dark: #1a1a1a;
+  --color-surface: #eef2f3;
+  --color-header: #1f2a2c;
+  --color-header-deep: #1f2a2c;
+  --color-header-soft: #f4faf8;
+  --color-primary: #1f2a2c;
+  --color-primary-dark: #1f2a2c;
+
+  /* 点缀：玉色 */
+  --color-accent: #4fad9f;
+  --color-accent-deep: #3a8f83;
+  --color-accent-soft: #e8f6f3;
+
+  /* 银月：次要冷色 */
+  --color-moon: #7a92a8;
+  --color-moon-soft: #eef2f6;
+
+  /* 语义色 */
   --color-expense: #e07070;
-  --color-expense-soft: #e07070;
-  --color-income: #5aaa9a;
-  --color-text: #1a1a1a;
-  --color-text-secondary: #8c8c8c;
-  --color-mute: #cfcfcf;
-  --color-line: rgba(26, 26, 26, 0.06);
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-sheet: 28px;
-  --radius-btn: 999px;
-  --radius-card: 16px;
-  --shadow-sheet: 0 -2px 12px rgba(26, 26, 26, 0.04);
-  --shadow-soft: 0 2px 16px rgba(26, 26, 26, 0.05);
+  --color-expense-soft: #fdf1f1;
+  --color-income: #4fad9f;
+  --color-income-soft: #e8f6f3;
+  --color-task: #6b9bc3;
+  --color-task-soft: #eef4f9;
+  --color-note: #7a92a8;
+  --color-note-soft: #eef2f6;
+
+  --color-text: #1f2a2c;
+  --color-text-secondary: #7a858c;
+  --color-mute: #c5cdd1;
+  --color-line: rgba(31, 42, 44, 0.06);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-sheet: 20px;
+  --radius-btn: 14px;
+  --radius-card: 14px;
+
+  --shadow-sheet: 0 -1px 8px rgba(31, 42, 44, 0.03);
+  --shadow-soft: 0 2px 10px rgba(31, 42, 44, 0.04);
   --color-border: var(--color-line);
+
   --font-input: 28px;
   --font-body: 28px;
   --font-label: 22px;
@@ -36,6 +57,7 @@ page {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: 'PingFang SC', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+  letter-spacing: 0.01em;
 }
 
 /* H5：避免系统默认把 input/textarea 字号拉乱 */

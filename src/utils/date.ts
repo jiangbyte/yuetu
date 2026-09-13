@@ -26,6 +26,33 @@ export function todayDate() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
+/**
+ * 生成当月横向日期条数据：周几 + 日号。
+ */
+export function listMonthDays(ym: string) {
+  // 1. 解析年月并取当月天数
+  // 2. 按日生成 ISO 日期与周几文案
+  const [y, m] = ym.split('-').map(Number)
+  const last = new Date(y, m, 0).getDate()
+  const week = ['日', '一', '二', '三', '四', '五', '六']
+  const days: Array<{ date: string; day: number; weekLabel: string }> = []
+  for (let day = 1; day <= last; day++) {
+    const date = `${ym}-${String(day).padStart(2, '0')}`
+    const wd = new Date(y, m - 1, day).getDay()
+    days.push({ date, day, weekLabel: `周${week[wd]}` })
+  }
+  return days
+}
+
+/**
+ * 进入某月时默认选中的日期：本月选今天，否则选该月 1 号。
+ */
+export function defaultDayInMonth(ym: string) {
+  const today = todayDate()
+  if (today.startsWith(`${ym}-`)) return today
+  return `${ym}-01`
+}
+
 /** 日分组标题：03月 12日 周二 */
 export function formatDayLabel(isoDate: string) {
   const d = new Date(`${isoDate}T00:00:00`)
@@ -59,6 +86,12 @@ export function formatYearMonthShort(ym: string) {
 /** 从 YYYY-MM-DD 取年月 */
 export function yearMonthOf(date: string) {
   return date.slice(0, 7)
+}
+
+/** 拆出年月数字，供日期条左侧展示 */
+export function splitYearMonth(ym: string) {
+  const [y, m] = ym.split('-')
+  return { year: y, month: String(Number(m)) }
 }
 
 /** 构建月历格子（含上月/下月占位） */

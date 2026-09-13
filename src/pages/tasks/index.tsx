@@ -13,6 +13,7 @@ import { categoryRepo } from '../../repositories/categoryRepo'
 import { noteRepo } from '../../repositories/noteRepo'
 import { taskRepo } from '../../repositories/taskRepo'
 import { formatDateShort, todayDate } from '../../utils/date'
+import { hexToRgba } from '../../utils/color'
 import './index.scss'
 
 const TAB_KEY = 'yuetu_workspace_tab'
@@ -23,6 +24,7 @@ export default function WorkspacePage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [notes, setNotes] = useState<Note[]>([])
   const [tags, setTags] = useState<string[]>([])
+  const [colorMap, setColorMap] = useState<Record<string, string>>({})
   const [tag, setTag] = useState('全部')
   const [keyword, setKeyword] = useState('')
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
@@ -33,19 +35,23 @@ export default function WorkspacePage() {
     setLoading(true)
     try {
       if (nextMode === 'task') {
-        const [list, cats] = await Promise.all([
+        const [list, cats, colors] = await Promise.all([
           taskRepo.list(),
           categoryRepo.listByType('task'),
+          categoryRepo.colorMap(),
         ])
         setTasks(list)
         setTags(cats.map((c) => c.name))
+        setColorMap(colors)
       } else {
-        const [list, cats] = await Promise.all([
+        const [list, cats, colors] = await Promise.all([
           noteRepo.list(),
           categoryRepo.listByType('note'),
+          categoryRepo.colorMap(),
         ])
         setNotes(list)
         setTags(cats.map((c) => c.name))
+        setColorMap(colors)
       }
     } catch (e: any) {
       Taro.showToast({ title: e?.message || '加载失败', icon: 'none' })
@@ -242,17 +248,51 @@ export default function WorkspacePage() {
         </View>
 
         <View className='workspace-page__chips'>
-          {chipList.map((name) => (
-            <Text
-              key={name}
-              className={`workspace-page__chip ${
-                tag === name ? 'is-active' : ''
-              }`}
-              onClick={() => setTag(name)}
-            >
-              {name}
-            </Text>
-          ))}
+          {chipList.map((name) => {
+            const active = tag === name
+            const color =
+              name === '全部'
+                ? 'var(--color-accent)'
+                : colorMap[name] || '#7a8694'
+            const chipStyle =
+              name === '全部'
+                ? active
+                  ? {
+                      background: 'var(--color-accent)',
+                      color: '#ffffff',
+                      boxShadow: 'none',
+                    }
+                  : undefined
+                : active
+                  ? {
+                      background: color,
+                      color: '#ffffff',
+                      boxShadow: 'none',
+                    }
+                  : {
+                      background: hexToRgba(String(color), 0.14),
+                      color: String(color),
+                      boxShadow: `inset 0 0 0 1px ${hexToRgba(String(color), 0.35)}`,
+                    }
+            return (
+              <View
+                key={name}
+                className={`workspace-page__chip ${active ? 'is-active' : ''}`}
+                style={chipStyle}
+                onClick={() => setTag(name)}
+              >
+                {name !== '全部' && (
+                  <View
+                    className='workspace-page__chip-dot'
+                    style={{
+                      background: active ? '#ffffff' : String(color),
+                    }}
+                  />
+                )}
+                <Text className='workspace-page__chip-text'>{name}</Text>
+              </View>
+            )
+          })}
         </View>
       </View>
 

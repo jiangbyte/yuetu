@@ -30,8 +30,8 @@
 
   &__today-btn {
     font-size: 24px;
-    color: var(--color-primary-dark);
-    font-weight: 500;
+    color: var(--color-accent-deep);
+    font-weight: 600;
   }
 
   &__week {
@@ -67,12 +67,12 @@
     }
 
     &.is-today .calendar-page__day-num {
-      color: var(--color-primary-dark);
+      color: var(--color-accent-deep);
       font-weight: 700;
     }
 
     &.is-selected .calendar-page__day-num {
-      background: var(--color-header);
+      background: var(--color-accent);
       color: #fff;
       font-weight: 700;
     }
@@ -113,11 +113,11 @@
     border-radius: 50%;
 
     &.is-tx {
-      background: var(--color-primary-dark);
+      background: var(--color-accent);
     }
 
     &.is-task {
-      background: var(--color-income);
+      background: var(--color-task);
     }
   }
 
@@ -239,7 +239,7 @@
     top: 0;
     bottom: 0;
     width: 6px;
-    background: var(--color-header);
+    background: var(--color-task);
   }
 
   &__check {
@@ -257,7 +257,7 @@
     flex-shrink: 0;
 
     &.is-done {
-      background: var(--color-header);
+      background: var(--color-task);
       box-shadow: none;
       color: #fff;
     }

@@ -1,11 +1,11 @@
 .amount-text {
-  font-weight: 700;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 
   &--sm {
     font-size: 28px;
-    font-weight: 600;
+    font-weight: 500;
   }
 
   &--md {
@@ -13,8 +13,10 @@
   }
 
   &--lg {
-    font-size: 64px;
-    line-height: 1.1;
+    font-size: 56px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
   }
 
   &--income {

@@ -16,7 +16,7 @@
 
   &--md {
     height: 88px;
-    border-radius: 16px;
+    border-radius: var(--radius-md);
   }
 
   &--mini {
@@ -24,12 +24,13 @@
     width: auto;
     height: 64px;
     padding: 0 24px;
-    border-radius: 12px;
+    border-radius: var(--radius-sm);
   }
 
   &--primary {
-    background: var(--color-primary);
+    background: var(--color-accent);
     color: #ffffff;
+    border-color: transparent;
   }
 
   &--danger {
@@ -66,7 +67,8 @@
 
   &__text {
     font-size: 30px;
-    font-weight: 600;
+    font-weight: 500;
+    letter-spacing: 0.04em;
     line-height: 1;
     color: inherit;
   }

@@ -13,11 +13,11 @@ import {
 import { AppIcon } from '../AppIcon'
 import './index.scss'
 
-const ICON_IDLE = '#8c8c8c'
-const ICON_ACTIVE = '#1a1a1a'
+const ICON_IDLE = '#7a858c'
+const ICON_ACTIVE = '#3a8f83'
 const TAB_ICON = 20
 const CENTER_ICON = 24
-const ACTION_ICON = 26
+const ACTION_ICON = 22
 
 const TABS = [
   {
@@ -47,34 +47,27 @@ const TABS = [
   },
 ] as const
 
-/** 以中心按钮为圆心的扇形三点：左 / 顶 / 右 */
 const ACTIONS = [
   {
     label: '记一笔',
-    hint: '流水',
     url: '/pages/ledger/edit',
     tone: 'ledger',
     icon: Wallet,
-    color: '#1a1a1a',
-    slot: 'left',
+    color: '#3a8f83',
   },
   {
-    label: '新任务',
-    hint: '待办',
+    label: '加个任务',
     url: '/pages/tasks/edit',
     tone: 'task',
     icon: ListTodo,
-    color: '#5aaa9a',
-    slot: 'top',
+    color: '#6b9bc3',
   },
   {
-    label: '写笔记',
-    hint: '备忘',
+    label: '写两句',
     url: '/pages/notes/edit',
     tone: 'note',
     icon: FileText,
-    color: '#666666',
-    slot: 'right',
+    color: '#7a92a8',
   },
 ] as const
 
@@ -85,7 +78,7 @@ function resolveSelected(route: string) {
   return 'ledger'
 }
 
-/** 底部 Dock：中心扇形添加菜单 */
+/** 底部 Dock：中间 + 弹出三个快捷入口 */
 export function AppDock() {
   const [open, setOpen] = useState(false)
   const pages = Taro.getCurrentPages()
@@ -122,37 +115,19 @@ export function AppDock() {
         <View className='app-dock__mask' onClick={() => setOpen(false)} />
       )}
 
-      <View className={`app-dock__sheet ${open ? 'is-open' : ''}`}>
-        <View className='app-dock__fan-bg' />
-        <View className='app-dock__sheet-head'>
-          <Text className='app-dock__sheet-title'>添加</Text>
-          <Text className='app-dock__sheet-sub'>记一笔 · 新任务 · 写笔记</Text>
-        </View>
-
-        {/* 圆心对齐中心 +，三支辐条旋转铺成扇形 */}
-        <View className='app-dock__hub'>
-          {ACTIONS.map((item) => (
-            <View
-              key={item.url}
-              className={`app-dock__spoke app-dock__spoke--${item.slot}`}
-            >
-              <View
-                className={`app-dock__action app-dock__action--${item.tone}`}
-                onClick={() => onAction(item.url)}
-              >
-                <View className='app-dock__action-icon'>
-                  <AppIcon
-                    icon={item.icon}
-                    size={ACTION_ICON}
-                    color={item.color}
-                  />
-                </View>
-                <Text className='app-dock__action-label'>{item.label}</Text>
-                <Text className='app-dock__action-hint'>{item.hint}</Text>
-              </View>
+      <View className={`app-dock__panel ${open ? 'is-open' : ''}`}>
+        {ACTIONS.map((item) => (
+          <View
+            key={item.url}
+            className={`app-dock__action app-dock__action--${item.tone}`}
+            onClick={() => onAction(item.url)}
+          >
+            <View className='app-dock__action-icon'>
+              <AppIcon icon={item.icon} size={ACTION_ICON} color={item.color} />
             </View>
-          ))}
-        </View>
+            <Text className='app-dock__action-label'>{item.label}</Text>
+          </View>
+        ))}
       </View>
 
       <View className='app-dock__bar'>

@@ -18,11 +18,15 @@ import {
 } from '../../repositories/transactionRepo'
 import {
   currentYearMonth,
-  formatYearMonthShort,
+  defaultDayInMonth,
+  formatDayLabel,
+  listMonthDays,
   shiftYearMonth,
+  splitYearMonth,
   todayDate,
 } from '../../utils/date'
 import { formatMoney } from '../../utils/money'
+import { hexToRgba } from '../../utils/color'
 import './index.scss'
 
 type Direction = 'all' | TxType
@@ -37,6 +41,9 @@ const PAGE_SIZE = 20
 
 export default function LedgerPage() {
   const [ym, setYm] = useState(currentYearMonth())
+  const [selectedDay, setSelectedDay] = useState(() =>
+    defaultDayInMonth(currentYearMonth()),
+  )
   const [summary, setSummary] = useState<MonthSummary>({
     income: 0,
     expense: 0,
@@ -53,6 +60,9 @@ export default function LedgerPage() {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [loading, setLoading] = useState(true)
   const [openId, setOpenId] = useState('')
+
+  const monthParts = useMemo(() => splitYearMonth(ym), [ym])
+  const monthDays = useMemo(() => listMonthDays(ym), [ym])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -93,10 +103,22 @@ export default function LedgerPage() {
     load()
   }, [load])
 
+  // 换月时重置选中日与筛选
+  useEffect(() => {
+    setSelectedDay(defaultDayInMonth(ym))
+    setTag('全部')
+    setKeyword('')
+    setOpenId('')
+  }, [ym])
+
   // 筛选条件变化时从首页重新分页
   useEffect(() => {
     setVisibleCount(PAGE_SIZE)
-  }, [direction, tag, keyword, ym])
+  }, [direction, tag, keyword, ym, selectedDay])
+
+  const onSwitchMonth = (delta: number) => {
+    setYm(shiftYearMonth(ym, delta))
+  }
 
   const onSwitchDirection = (next: Direction) => {
     if (next === direction) return
@@ -104,6 +126,12 @@ export default function LedgerPage() {
     setTag('全部')
     setOpenId('')
   }
+
+  const daysWithTx = useMemo(() => {
+    const set = new Set<string>()
+    list.forEach((item) => set.add(item.occurredAt.slice(0, 10)))
+    return set
+  }, [list])
 
   const chipList = useMemo(() => {
     const fromRepo =
@@ -122,6 +150,7 @@ export default function LedgerPage() {
   const filteredList = useMemo(() => {
     const q = keyword.trim().toLowerCase()
     return list.filter((item) => {
+      if (item.occurredAt.slice(0, 10) !== selectedDay) return false
       if (direction !== 'all' && item.type !== direction) return false
       if (tag !== '全部' && item.category !== tag) return false
       if (!q) return true
@@ -131,7 +160,17 @@ export default function LedgerPage() {
         item.paymentMethod.toLowerCase().includes(q)
       )
     })
-  }, [list, direction, tag, keyword])
+  }, [list, direction, tag, keyword, selectedDay])
+
+  const daySummary = useMemo(() => {
+    let income = 0
+    let expense = 0
+    filteredList.forEach((item) => {
+      if (item.type === 'income') income += item.amount
+      else expense += item.amount
+    })
+    return { income, expense }
+  }, [filteredList])
 
   const visibleList = useMemo(
     () => filteredList.slice(0, visibleCount),
@@ -162,9 +201,9 @@ export default function LedgerPage() {
   }
 
   const emptyHint = (() => {
-    if (loading) return '加载中...'
-    if (list.length === 0) return '本月还没有流水'
-    if (filteredList.length === 0) return '没有符合筛选的流水'
+    if (loading) return '在翻账本…'
+    if (list.length === 0) return '这个月还空着，记一笔吧'
+    if (filteredList.length === 0) return '这天还没记过呢'
     return ''
   })()
 
@@ -174,59 +213,35 @@ export default function LedgerPage() {
       <View className='ledger-page__top'>
         <View className='ledger-page__hero'>
           <View className='ledger-page__hero-top'>
-            <View className='ledger-page__month'>
-              <Text
-                className='ledger-page__arrow'
-                onClick={() => {
-                  setYm(shiftYearMonth(ym, -1))
-                  setTag('全部')
-                  setKeyword('')
-                }}
-              >
-                ‹
-              </Text>
-              <Text className='ledger-page__ym'>
-                {formatYearMonthShort(ym)}
-              </Text>
-              <Text
-                className='ledger-page__arrow'
-                onClick={() => {
-                  setYm(shiftYearMonth(ym, 1))
-                  setTag('全部')
-                  setKeyword('')
-                }}
-              >
-                ›
-              </Text>
-            </View>
+            <Text className='ledger-page__hero-label'>这个月</Text>
             <Text
               className='ledger-page__report'
               onClick={() => Taro.navigateTo({ url: '/pages/reports/index' })}
             >
-              报表
+              看看报表
             </Text>
           </View>
 
-          <Text className='ledger-page__hint'>本月支出</Text>
+          <Text className='ledger-page__hint'>花出去</Text>
           <View className='ledger-page__main-amount'>
             <AmountText value={summary.expense} size='lg' />
           </View>
 
           <View className='ledger-page__stats'>
             <View className='ledger-page__stat'>
-              <Text className='ledger-page__stat-label'>今日支出</Text>
+              <Text className='ledger-page__stat-label'>今天</Text>
               <Text className='ledger-page__stat-value'>
                 {formatMoney(todayExpense)}
               </Text>
             </View>
             <View className='ledger-page__stat'>
-              <Text className='ledger-page__stat-label'>本月收入</Text>
+              <Text className='ledger-page__stat-label'>进账</Text>
               <Text className='ledger-page__stat-value is-income'>
                 {formatMoney(summary.income)}
               </Text>
             </View>
             <View className='ledger-page__stat'>
-              <Text className='ledger-page__stat-label'>本月结余</Text>
+              <Text className='ledger-page__stat-label'>还剩</Text>
               <Text
                 className={`ledger-page__stat-value ${
                   summary.balance >= 0 ? 'is-income' : ''
@@ -238,57 +253,166 @@ export default function LedgerPage() {
           </View>
         </View>
 
-        <View className='ledger-page__tabs'>
-          {DIRECTION_TABS.map((tab) => (
-            <Text
-              key={tab.key}
-              className={`ledger-page__tab ${
-                direction === tab.key ? 'is-active' : ''
-              }`}
-              onClick={() => onSwitchDirection(tab.key)}
-            >
-              {tab.label}
-            </Text>
-          ))}
-        </View>
-
-        <View className='ledger-page__search'>
-          <View className='ledger-page__search-icon' aria-hidden>
-            <AppIcon icon={Search} size={18} color='#b0b0b0' />
-          </View>
-          <View className='ledger-page__search-field'>
-            <Input
-              className='ledger-page__search-input'
-              placeholder='搜索分类、备注、支付方式'
-              placeholderClass='ledger-page__search-ph'
-              value={keyword}
-              onInput={(e) => setKeyword(e.detail.value)}
-              confirmType='search'
-            />
-          </View>
-          {!!keyword && (
+        <View className='ledger-page__dates'>
+          <View className='ledger-page__dates-side'>
             <View
-              className='ledger-page__search-clear'
-              onClick={() => setKeyword('')}
+              className='ledger-page__dates-nav'
+              onClick={() => onSwitchMonth(-1)}
             >
-              <AppIcon icon={X} size={14} color='#8a8a8a' />
+              <Text className='ledger-page__dates-nav-text'>‹</Text>
             </View>
-          )}
-        </View>
-
-        <View className='ledger-page__chips'>
-          {chipList.map((name) => (
-            <Text
-              key={name}
-              className={`ledger-page__chip ${tag === name ? 'is-active' : ''}`}
-              onClick={() => setTag(name)}
+            <View className='ledger-page__dates-ym'>
+              <Text className='ledger-page__dates-year'>{monthParts.year}</Text>
+              <Text className='ledger-page__dates-month'>
+                {monthParts.month}
+              </Text>
+            </View>
+            <View
+              className='ledger-page__dates-nav'
+              onClick={() => onSwitchMonth(1)}
             >
-              {name}
-            </Text>
-          ))}
+              <Text className='ledger-page__dates-nav-text'>›</Text>
+            </View>
+          </View>
+
+          <ScrollView
+            className='ledger-page__dates-scroll'
+            scrollX
+            scrollWithAnimation
+            enableFlex
+            scrollIntoView={`day-${selectedDay}`}
+          >
+            <View className='ledger-page__dates-row'>
+              {monthDays.map((item) => {
+                const active = item.date === selectedDay
+                const hasTx = daysWithTx.has(item.date)
+                return (
+                  <View
+                    key={item.date}
+                    id={`day-${item.date}`}
+                    className={`ledger-page__date-item ${
+                      active ? 'is-active' : ''
+                    }`}
+                    onClick={() => {
+                      setSelectedDay(item.date)
+                      setOpenId('')
+                    }}
+                  >
+                    <Text className='ledger-page__date-week'>
+                      {item.weekLabel}
+                    </Text>
+                    <Text className='ledger-page__date-num'>{item.day}</Text>
+                    <View
+                      className={`ledger-page__date-dot ${
+                        active || hasTx ? 'is-on' : ''
+                      } ${active ? 'is-active' : ''}`}
+                    />
+                  </View>
+                )
+              })}
+            </View>
+          </ScrollView>
         </View>
 
-        <Text className='ledger-page__list-title'>账单</Text>
+        <View className='ledger-page__filters'>
+          <View className='ledger-page__tabs'>
+            {DIRECTION_TABS.map((tab) => (
+              <Text
+                key={tab.key}
+                className={`ledger-page__tab ${
+                  direction === tab.key ? 'is-active' : ''
+                }`}
+                onClick={() => onSwitchDirection(tab.key)}
+              >
+                {tab.label}
+              </Text>
+            ))}
+          </View>
+
+          <View className='ledger-page__search'>
+            <View className='ledger-page__search-icon' aria-hidden>
+              <AppIcon icon={Search} size={18} color='#b0b0b0' />
+            </View>
+            <View className='ledger-page__search-field'>
+              <Input
+                className='ledger-page__search-input'
+                placeholder='搜分类、备注或支付方式'
+                placeholderClass='ledger-page__search-ph'
+                value={keyword}
+                onInput={(e) => setKeyword(e.detail.value)}
+                confirmType='search'
+              />
+            </View>
+            {!!keyword && (
+              <View
+                className='ledger-page__search-clear'
+                onClick={() => setKeyword('')}
+              >
+                <AppIcon icon={X} size={14} color='#8a8a8a' />
+              </View>
+            )}
+          </View>
+
+          <View className='ledger-page__chips'>
+            {chipList.map((name) => {
+              const active = tag === name
+              const color =
+                name === '全部'
+                  ? 'var(--color-accent)'
+                  : colorMap[name] || '#7a8694'
+              const chipStyle =
+                name === '全部'
+                  ? active
+                    ? {
+                        background: 'var(--color-accent)',
+                        color: '#ffffff',
+                        boxShadow: 'none',
+                      }
+                    : undefined
+                  : active
+                    ? {
+                        background: color,
+                        color: '#ffffff',
+                        boxShadow: 'none',
+                      }
+                    : {
+                        background: hexToRgba(String(color), 0.14),
+                        color: String(color),
+                        boxShadow: `inset 0 0 0 1px ${hexToRgba(String(color), 0.35)}`,
+                      }
+              return (
+                <View
+                  key={name}
+                  className={`ledger-page__chip ${active ? 'is-active' : ''} ${
+                    name === '全部' ? 'is-all' : ''
+                  }`}
+                  style={chipStyle}
+                  onClick={() => setTag(name)}
+                >
+                  {name !== '全部' && (
+                    <View
+                      className='ledger-page__chip-dot'
+                      style={{
+                        background: active ? '#ffffff' : String(color),
+                      }}
+                    />
+                  )}
+                  <Text className='ledger-page__chip-text'>{name}</Text>
+                </View>
+              )
+            })}
+          </View>
+        </View>
+
+        <View className='ledger-page__day-head'>
+          <Text className='ledger-page__list-title'>
+            {formatDayLabel(selectedDay)}
+          </Text>
+          <Text className='ledger-page__day-sum'>
+            支 {formatMoney(daySummary.expense)} · 收{' '}
+            {formatMoney(daySummary.income)}
+          </Text>
+        </View>
       </View>
 
       <ScrollView
@@ -313,6 +437,7 @@ export default function LedgerPage() {
               date={g.date}
               income={income}
               expense={expense}
+              hideHead
             >
               {g.items.map((item) => (
                 <SwipeDelete
@@ -366,9 +491,9 @@ export default function LedgerPage() {
         {!emptyHint && (
           <Text className='ledger-page__foot'>
             {hasMore
-              ? '上拉加载更多'
+              ? '再往上翻翻'
               : filteredList.length > 0
-                ? '没有更多了'
+                ? '到头啦'
                 : ''}
           </Text>
         )}

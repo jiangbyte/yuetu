@@ -38,7 +38,7 @@ export default function MineAboutPage() {
         <Text className='mine-about__desc'>
           本地优先的个人账本与事项工具：流水记账、日历总览、任务与笔记。数据只保存在本机，不上传云端。
         </Text>
-        <Text className='mine-about__ver'>版本 1.0.0</Text>
+        <Text className='mine-about__ver'>版本 1.1.0</Text>
       </AppCard>
 
       <AppCard className='mine-about__card'>
