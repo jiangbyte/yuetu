@@ -17,10 +17,21 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            // 1. 优先读环境变量（CI / 本地可覆盖）
+            // 2. 回退到仓库内分发签名密钥，保证 assembleRelease 可复现
+            storeFile file('yuetu-release.keystore')
+            storePassword System.getenv('YUETU_STORE_PASSWORD') ?: 'yuetu-release'
+            keyAlias System.getenv('YUETU_KEY_ALIAS') ?: 'yuetu'
+            keyPassword System.getenv('YUETU_KEY_PASSWORD') ?: 'yuetu-release'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }

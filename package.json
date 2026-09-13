@@ -17,7 +17,7 @@
     "build:alipay": "taro build --type alipay",
     "build:tt": "taro build --type tt",
     "build:h5": "taro build --type h5",
-    "build:android": "CAPACITOR=1 taro build --type h5 && npx cap sync android && cd android && JAVA_HOME=${JAVA_HOME_21:-/home/charlie/Workspace/sdks/jdk-21} ANDROID_HOME=${ANDROID_HOME:-$HOME/Android/Sdk} ./gradlew assembleDebug",
+    "build:android": "CAPACITOR=1 taro build --type h5 && npx cap sync android && cd android && JAVA_HOME=${JAVA_HOME_21:-/home/charlie/Workspace/sdks/jdk-21} ANDROID_HOME=${ANDROID_HOME:-$HOME/Android/Sdk} ./gradlew assembleRelease",
     "sync:android": "CAPACITOR=1 taro build --type h5 && npx cap sync android",
     "open:android": "npx cap open android",
     "build:rn": "taro build --type rn",

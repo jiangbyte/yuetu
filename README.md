@@ -33,7 +33,7 @@
 | 我的 | 分类管理、数据导入导出 / 清空、关于 |
 | 底部 Dock | 流水 · 日历 · ⊕ · 事项 · 我的；中间扇形快捷记一笔 / 新任务 / 写笔记 |
 
-**做齐：** 本地 SQLite、自定义顶栏与返回、Capacitor 打 Android debug APK。  
+**做齐：** 本地 SQLite、自定义顶栏与返回、Capacitor 打 Android release APK。  
 **刻意不做：** 云同步、账号体系、多账本协作。
 
 ## 技术栈
@@ -109,16 +109,16 @@ pnpm sync:android
 # 2a. Android Studio 打开（推荐）
 pnpm open:android
 
-# 2b. 命令行打 debug 包（需 JDK 21）
+# 2b. 命令行打 release 包（需 JDK 21）
 export JAVA_HOME=/path/to/jdk-21
 pnpm build:android
 ```
 
-Debug APK 路径：
+Release APK 路径：
 
-`android/app/build/outputs/apk/debug/app-debug.apk`
+`android/app/build/outputs/apk/release/app-release.apk`
 
-推送 `v*` tag 时，GitHub Actions 会自动构建 Android debug APK 并发布 Release。说明见 `docs/release-notes/`。
+推送 `v*` tag 时，GitHub Actions 会自动构建 Android release APK 并发布 Release。说明见 `docs/release-notes/`。
 
 ### Android（React Native，可选）
 

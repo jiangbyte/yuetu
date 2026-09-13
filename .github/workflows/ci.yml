@@ -1,4 +1,4 @@
-# CI：构建 Android debug APK
+# CI：构建 Android release APK
 #
 # Author: Charlie
 
@@ -53,15 +53,15 @@ jobs:
       - name: Sync web assets into Android
         run: pnpm sync:android
 
-      - name: Assemble debug APK
+      - name: Assemble release APK
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease --no-daemon
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: yuetu-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: yuetu-release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
