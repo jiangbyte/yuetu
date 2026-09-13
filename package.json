@@ -39,6 +39,7 @@
     "maintained node versions"
   ],
   "author": "Charlie Zhang <jiangbytebiz@163.com>",
+  "license": "Apache-2.0",
   "dependencies": {
     "@babel/runtime": "^7.24.4",
     "@capacitor/android": "^8.5.2",

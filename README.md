@@ -7,11 +7,12 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-Local-003B57?logo=sqlite&logoColor=white)
 ![Capacitor](https://img.shields.io/badge/Capacitor-Android-119EFF?logo=capacitor&logoColor=white)
+![License](https://img.shields.io/badge/License-Apache_2.0-blue)
 
 **月兔** 是一款本地优先的个人账本与事项 Android App：流水记账、日历总览、任务与笔记；数据落在本机 SQLite，不上传云端。  
 仓库：[jiangbyte/yuetu](https://github.com/jiangbyte/yuetu)
 
-> 坐标：`io.github.jiangbyte.yuetu` · 作者：[Charlie Zhang](https://github.com/jiangbyte) · 邮箱：`jiangbytebiz@163.com`
+> 坐标：`io.github.jiangbyte.yuetu` · 协议：[Apache License 2.0](LICENSE)
 
 ## 目录
 
@@ -20,7 +21,8 @@
 - [工程结构](#工程结构)
 - [快速开始](#快速开始)
 - [Android APK](#android-apk)
-- [作者](#作者)
+- [Q&A](#qa)
+- [License](#license)
 
 ## 功能特性
 
@@ -34,7 +36,7 @@
 | 底部 Dock | 流水 · 日历 · ⊕ · 事项 · 我的；中间扇形快捷记一笔 / 新任务 / 写笔记 |
 
 **做齐：** 本地 SQLite、自定义顶栏与返回、Capacitor 打 Android release APK。  
-**刻意不做：** 云同步、账号体系、多账本协作。
+**当前不做：** 强制云同步、账号体系、多账本协作（云端若后续提供，会做成可选能力）。
 
 ## 技术栈
 
@@ -129,11 +131,42 @@ pnpm dev:rn
 pnpm build:rn -- --platform android
 ```
 
-## 作者
+## Q&A
 
-| 项 | 内容 |
-| --- | --- |
-| 作者 | Charlie Zhang（[jiangbyte](https://github.com/jiangbyte)） |
-| 邮箱 | jiangbytebiz@163.com |
-| 仓库 | [github.com/jiangbyte/yuetu](https://github.com/jiangbyte/yuetu) |
-| AppId | `io.github.jiangbyte.yuetu` |
+### 开发动机是什么？
+
+想做一个**先本地可用**的个人账本 + 事项工具：记流水、看日历、管任务与笔记，日常够用即可。首发不强制登录、不依赖云，避免「装完还要注册才能用」。顺手练完整条链路：Taro 多端工程、本地 SQLite、Capacitor 打 Android 包与 GitHub Release。
+
+### 有哪些功能？当前不做哪些？
+
+**有：**
+
+- 流水（收支、分类、支付方式、搜索、分页）与报表
+- 日历总览；事项（任务 / 笔记、优先级、到期日）
+- 分类管理、数据导出 / 清空；自定义顶栏与底部 Dock
+
+**当前版本不做：** 云同步、账号体系、多账本协作、社交分享。换机请自行导出备份。云端能力若后续推出，会作为**可选**能力单独说明，不会默默改成「必须上网才能用」。
+
+### 为什么用 Taro（Web / 混合）而不用 Flutter？
+
+两方面：
+
+1. **环境现状**：开发机刚配好 Web 与 Android SDK，Flutter 工具链还没准备好，先用现成环境把 App 跑起来、打出 APK。
+2. **端形态预留**：Taro 同一套 React + TypeScript 业务代码，之后若要出 **H5 网页** 或 **微信小程序**，迁移成本通常低于从 Flutter 另起一套。这里说的是「方便再出端」，**不等于**现在就要上云或把数据放到服务器。
+
+当前 Android 包是 Capacitor 包装 H5 产物，属于务实的混合方案，不是否定原生或 Flutter，只是在现有条件下优先可交付与可扩展。
+
+### 数据安全吗？会上传吗？
+
+- **当前版本**：业务数据只写在本机 SQLite（H5 为 sql.js + IndexedDB），**没有**账号登录，也**没有**自动上传 / 远程同步逻辑。
+- **之后**：不排除增加**可选**的云备份、多端同步等服务；上线时会明确开关与隐私说明。未开启前，行为仍以本地为准。
+- **备份**：导出 / 清空在「我的 → 数据」；卸载或清应用数据会丢库，重要账目请自行备份。
+- **可审计**：代码与构建公开；Release APK 由 Actions / 本地 `assembleRelease` 打出。分发签名在仓库内用于可复现构建，若要强隔离可自行换 keystore 重签。
+
+### 和「原生 / RN 真机性能」比怎么样？
+
+首发目标是功能闭环与本地可用，不是极致原生性能。列表分页、图表按需加载，日常记账体量足够。若后续要更贴系统体验，可走 Taro RN 路径或替换壳层，领域与仓储层已相对独立。
+
+## License
+
+本项目基于 [Apache License 2.0](LICENSE) 开源。完整条款见 [LICENSE](LICENSE)，版权声明见 [NOTICE](NOTICE)。
