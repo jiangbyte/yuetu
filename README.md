@@ -1,7 +1,6 @@
 # 月兔（yuetu）
 
 ![CI](https://github.com/jiangbyte/yuetu/actions/workflows/ci.yml/badge.svg)
-![Release](https://github.com/jiangbyte/yuetu/actions/workflows/release.yml/badge.svg)
 ![Taro](https://img.shields.io/badge/Taro-4.2-blue)
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
@@ -120,7 +119,7 @@ Release APK 路径：
 
 `android/app/build/outputs/apk/release/app-release.apk`
 
-推送 `v*` tag 时，GitHub Actions 会自动构建 Android release APK 并发布 Release。说明见 `docs/release-notes/`。
+推送 `v*` tag，或在 Actions 里对 **CI** 手动运行并勾选 publish，会自动构建 Android release APK 并发布 GitHub Release。说明见 `docs/release-notes/`。
 
 ### Android（React Native，可选）
 

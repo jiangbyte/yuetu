@@ -1,18 +1,37 @@
-# CI：构建 Android release APK
+# CI：构建 Android release APK；推送 v* tag 或手动发布时同步打 GitHub Release
 #
 # Author: Charlie
+#
+# - push / PR：仅构建并上传 APK artifact
+# - push v* tag：构建 + 发布 Release（附件为 APK）
+# - workflow_dispatch + publish：按 package.json 版本创建 tag 并发布
 
 name: CI
 
 on:
   push:
     branches: [main, master]
+    tags: ['v*']
   pull_request:
     branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: '构建完成后按 package.json 版本发布 GitHub Release'
+        type: boolean
+        default: false
+      version:
+        description: '覆盖版本号（可选，如 1.0.1；默认读 package.json）'
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: write
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/') }}
 
 env:
   HUSKY: '0'
@@ -24,6 +43,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -45,6 +66,7 @@ jobs:
 
       - name: Install Android SDK packages
         run: |
+          yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
 
       - name: Install dependencies
@@ -65,3 +87,74 @@ jobs:
           name: yuetu-release-apk
           path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
+
+      - name: Resolve release meta
+        id: meta
+        if: >-
+          startsWith(github.ref, 'refs/tags/v') ||
+          (github.event_name == 'workflow_dispatch' && inputs.publish)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            TAG="${GITHUB_REF_NAME}"
+            VER="${TAG#v}"
+          else
+            VER="${{ inputs.version }}"
+            if [[ -z "${VER}" ]]; then
+              VER="$(node -p "require('./package.json').version")"
+            fi
+            TAG="v${VER}"
+          fi
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VER}" >> "$GITHUB_OUTPUT"
+          echo "apk_name=yuetu-${TAG}.apk" >> "$GITHUB_OUTPUT"
+          echo "Will publish ${TAG}"
+
+      - name: Stage APK
+        if: steps.meta.outputs.tag != ''
+        run: |
+          set -euo pipefail
+          cp android/app/build/outputs/apk/release/app-release.apk "${{ steps.meta.outputs.apk_name }}"
+          ls -lh "${{ steps.meta.outputs.apk_name }}"
+
+      - name: Load release notes
+        id: notes
+        if: steps.meta.outputs.tag != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          VER="${{ steps.meta.outputs.version }}"
+          FILE="docs/release-notes/v${VER}.md"
+          DELIM="NOTES_EOF_$(openssl rand -hex 8)"
+          {
+            echo "body<<${DELIM}"
+            if [ -f "$FILE" ]; then
+              if head -n1 "$FILE" | grep -qE '^# '; then
+                tail -n +2 "$FILE"
+              else
+                cat "$FILE"
+              fi
+            else
+              echo "月兔 ${{ steps.meta.outputs.tag }} 发布。"
+              echo ""
+              echo "- 附件：\`${{ steps.meta.outputs.apk_name }}\`（release）"
+              echo "- 由 GitHub Actions 自动构建"
+            fi
+            echo "${DELIM}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        if: steps.meta.outputs.tag != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.tag }}
+          body: ${{ steps.notes.outputs.body }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: ${{ steps.meta.outputs.apk_name }}
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
