@@ -1,7 +1,7 @@
 name: yuetu
-description: 月兔 - 本地优先的个人账本与事项 App
+description: 月兔 - 六端 Flutter 空白壳骨架
 publish_to: 'none'
-version: 2.0.0+3
+version: 1.0.0+1
 
 environment:
   sdk: ^3.13.3
@@ -9,34 +9,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
-  riverpod_annotation: ^2.6.1
   go_router: ^15.1.2
-  drift: ^2.26.1
-  sqlite3_flutter_libs: ^0.5.32
-  path_provider: ^2.1.5
-  path: ^1.9.1
-  fl_chart: ^0.71.0
-  share_plus: ^11.0.0
-  uuid: ^4.5.1
-  intl: ^0.20.2
-  lucide_icons: ^0.257.0
-  collection: ^1.19.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  drift_dev: ^2.26.1
-  build_runner: ^2.4.15
 
 flutter:
-  uses-material-design: true
-
-# Linux 主机测试使用系统 SQLite，避免从 GitHub 下载预编译 so
-hooks:
-  user_defines:
-    sqlite3:
-      source: system
-      name: sqlite3
+  uses-material-design: false
