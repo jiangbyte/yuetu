@@ -1,54 +1,51 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import '../theme/tokens.dart';
-import 'app_text.dart';
 
-/// 自定义页面壳：背景 + SafeArea + 可选标题，不走 Scaffold/AppBar 默认结构。
+/// 页面壳：浅灰底 + SafeArea（必须包 Material，否则文字会出现黄双下划线）。
 class AppScaffold extends StatelessWidget {
   const AppScaffold({
     super.key,
     required this.body,
-    this.title,
-    this.footer,
+    this.floatingActionButton,
+    this.bottomBar,
+    this.padding,
   });
 
   final Widget body;
-  final String? title;
-  final Widget? footer;
+  final Widget? floatingActionButton;
+  final Widget? bottomBar;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
-    // 1. 画布背景：浅色渐变，避免纯平单色
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.canvas, AppColors.canvasDeep],
-        ),
-      ),
-      child: SafeArea(
-        // 2. 页面内边距与纵向分区：标题 / 内容 / 页脚
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.page,
-            vertical: AppSpacing.lg,
+    return Material(
+      color: AppColors.canvas,
+      child: Stack(
+        children: [
+          SafeArea(
+            bottom: bottomBar == null,
+            child: Padding(
+              padding: padding ??
+                  const EdgeInsets.symmetric(horizontal: AppSpacing.page),
+              child: body,
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (title != null) ...[
-                AppText(title!, role: AppTextRole.title),
-                const SizedBox(height: AppSpacing.lg),
-              ],
-              Expanded(child: body),
-              if (footer != null) ...[
-                const SizedBox(height: AppSpacing.lg),
-                footer!,
-              ],
-            ],
-          ),
-        ),
+          if (floatingActionButton != null)
+            Positioned(
+              right: AppSpacing.page,
+              bottom: (bottomBar != null ? 72 : 24) +
+                  MediaQuery.paddingOf(context).bottom,
+              child: floatingActionButton!,
+            ),
+          if (bottomBar != null)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: bottomBar!,
+            ),
+        ],
       ),
     );
   }

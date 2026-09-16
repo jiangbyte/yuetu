@@ -2,10 +2,10 @@ import 'package:flutter/widgets.dart';
 
 import '../theme/tokens.dart';
 
-/// 文字角色：对应 Design Token 中的排版层级。
-enum AppTextRole { display, title, body, label, caption }
+/// 文字角色。
+enum AppTextRole { display, pageTitle, title, body, label, caption }
 
-/// 自建排版文字，不依赖 Material 默认 Text 主题样式名。
+/// 自建排版文字（强制无背景，避免黄底高亮）。
 class AppText extends StatelessWidget {
   const AppText(
     this.data, {
@@ -15,6 +15,7 @@ class AppText extends StatelessWidget {
     this.textAlign,
     this.maxLines,
     this.overflow,
+    this.weight,
   });
 
   final String data;
@@ -23,48 +24,52 @@ class AppText extends StatelessWidget {
   final TextAlign? textAlign;
   final int? maxLines;
   final TextOverflow? overflow;
+  final FontWeight? weight;
 
   @override
   Widget build(BuildContext context) {
-    // 1. 按角色映射字号/字重/默认色
-    final style = switch (role) {
+    final base = switch (role) {
       AppTextRole.display => TextStyle(
           fontSize: AppTypography.display,
-          fontWeight: AppTypography.bold,
-          height: 1.15,
-          letterSpacing: -0.8,
+          fontWeight: weight ?? AppTypography.bold,
+          height: 1.2,
+          color: color ?? AppColors.ink,
+        ),
+      AppTextRole.pageTitle => TextStyle(
+          fontSize: AppTypography.pageTitle,
+          fontWeight: weight ?? AppTypography.bold,
+          height: 1.25,
           color: color ?? AppColors.ink,
         ),
       AppTextRole.title => TextStyle(
           fontSize: AppTypography.title,
-          fontWeight: AppTypography.medium,
+          fontWeight: weight ?? AppTypography.bold,
           height: 1.3,
           color: color ?? AppColors.ink,
         ),
       AppTextRole.body => TextStyle(
           fontSize: AppTypography.body,
-          fontWeight: AppTypography.regular,
+          fontWeight: weight ?? AppTypography.regular,
           height: 1.5,
-          color: color ?? AppColors.inkMuted,
+          color: color ?? AppColors.ink,
         ),
       AppTextRole.label => TextStyle(
           fontSize: AppTypography.label,
-          fontWeight: AppTypography.medium,
+          fontWeight: weight ?? AppTypography.medium,
           height: 1.2,
           color: color ?? AppColors.ink,
         ),
       AppTextRole.caption => TextStyle(
           fontSize: AppTypography.caption,
-          fontWeight: AppTypography.regular,
+          fontWeight: weight ?? AppTypography.regular,
           height: 1.4,
           color: color ?? AppColors.inkMuted,
         ),
     };
 
-    // 2. 用基础 Text 渲染，避免引入 Material DefaultTextStyle 语义
     return Text(
       data,
-      style: style,
+      style: base.copyWith(backgroundColor: const Color(0x00000000)),
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,

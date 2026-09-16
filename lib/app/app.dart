@@ -8,13 +8,12 @@ import '../core/theme/app_theme.dart';
 import '../core/theme/tokens.dart';
 import 'router.dart';
 
-/// 根应用：系统栏样式 + 自定义主题 + 路由。
+/// 根应用。
 class YuetuApp extends ConsumerWidget {
   const YuetuApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 1. 读取路由并配置系统状态栏/导航栏外观
     final GoRouter router = ref.watch(routerProvider);
 
     SystemChrome.setSystemUIOverlayStyle(
@@ -26,12 +25,25 @@ class YuetuApp extends ConsumerWidget {
       ),
     );
 
-    // 2. 以 MaterialApp.router 为宿主，视觉完全交给自建主题与组件
     return MaterialApp.router(
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
+      color: AppColors.canvas,
       theme: buildAppTheme(),
       routerConfig: router,
+      builder: (context, child) {
+        return Material(
+          color: AppColors.canvas,
+          child: DefaultTextStyle.merge(
+            style: const TextStyle(
+              decoration: TextDecoration.none,
+              decorationColor: Color(0x00000000),
+              backgroundColor: Color(0x00000000),
+            ),
+            child: child ?? const SizedBox.shrink(),
+          ),
+        );
+      },
     );
   }
 }
