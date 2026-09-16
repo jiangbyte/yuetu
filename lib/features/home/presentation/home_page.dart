@@ -33,7 +33,7 @@ class HomePage extends StatelessWidget {
           ),
           const Spacer(flex: 3),
           const AppText(
-            'Android · iOS · Web · Linux · macOS · Windows',
+            'Android · Linux',
             role: AppTextRole.caption,
           ),
         ],
